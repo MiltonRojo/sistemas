@@ -58,7 +58,7 @@
 
     <header class="p-6 bg-blue-800 shadow-2xl text-center">
         <h1 class="text-3xl font-extrabold uppercase tracking-widest text-white">INGENIERÍA EN SISTEMAS DE INFORMACIÓN: RÉGIMEN DE CORRELATIVAS PLAN 2023 </h1>
-        <p class="text-blue-100 mt-2 italic text-sm">Validación oficial según Régimen de Correlativas</p>
+        <p class="text-blue-100 mt-2 italic text-sm">Validación oficial con Control de Equivalencias</p>
     </header>
 
     <main class="container mx-auto p-4 md:p-8">
@@ -117,6 +117,9 @@
 
             <section id="tab-analisis" class="tab-content hidden">
                 <input type="text" id="busqueda" onkeyup="renderAnalisis()" placeholder="Buscar materia (ej: logica, algebra, ingles)..." class="bg-slate-800 text-white border border-slate-700 p-4 rounded-lg w-full mb-6 outline-none focus:ring-2 focus:ring-blue-500">
+                
+                <div id="resumen-estadisticas" class="grid grid-cols-2 gap-4 mb-8"></div>
+
                 <div id="grid-analisis" class="space-y-12"></div>
             </section>
         </div>
@@ -128,7 +131,6 @@
         let activeRowId = null;
 
         const materiasBase = [
-            // NIVEL 1
             { id: 1, nivel: 1, nombre: "Análisis Matemático I", modPlan: "A", corrR: [], corrA: [] },
             { id: 2, nivel: 1, nombre: "Algebra y Geometría Analítica", modPlan: "A", corrR: [], corrA: [] },
             { id: 3, nivel: 1, nombre: "Física I", modPlan: "A", corrR: [], corrA: [] },
@@ -138,7 +140,6 @@
             { id: 7, nivel: 1, nombre: "Arquitectura de Computadoras", modPlan: "2C-1C", corrR: [], corrA: [] },
             { id: 8, nivel: 1, nombre: "Sistemas y Proceso de Negocios", modPlan: "1C-2C", corrR: [], corrA: [] },
             { id: 11, nivel: 1, nombre: "Ingeniería y Sociedad", modPlan: "2C-1C", corrR: [], corrA: [] },
-            // NIVEL 2
             { id: 9, nivel: 2, nombre: "Análisis Matemático II", modPlan: "A", corrR: [1, 2], corrA: [] },
             { id: 10, nivel: 2, nombre: "Física II", modPlan: "A", corrR: [1, 3], corrA: [] },
             { id: 12, nivel: 2, nombre: "Inglés II", modPlan: "A", corrR: [4], corrA: [] },
@@ -147,17 +148,14 @@
             { id: 15, nivel: 2, nombre: "Sistemas Operativos", modPlan: "A", corrR: [7], corrA: [] },
             { id: 16, nivel: 2, nombre: "Análisis de Sistemas de Información", modPlan: "A", corrR: [6, 8], corrA: [] },
             { id: 17, nivel: 2, nombre: "Probabilidad y Estadística", modPlan: "1C-2C", corrR: [1, 2], corrA: [] },
-            // NIVEL 3
             { id: 18, nivel: 3, nombre: "Economía", modPlan: "2C-1C", corrR: [], corrA: [1, 2] },
             { id: 19, nivel: 3, nombre: "Base de Datos", modPlan: "1C-2C", corrR: [13, 16], corrA: [5, 6] },
             { id: 20, nivel: 3, nombre: "Desarrollo de Software", modPlan: "1C-2C", corrR: [14, 16], corrA: [5, 6] },
-            { id: 21, nivel: 3, nombre: "Comunicación de Datos", modPlan: "A", corrR: [], corrA: [3, 7] },
+            { id: 21, nivel: 3, nombre: "Comunicación de Datos", modPlan: "A", corrR: [], coreA: [3, 7], corrA: [3, 7] },
             { id: 22, nivel: 3, nombre: "Análisis Numérico", modPlan: "2C-1C", corrR: [9], corrA: [1, 2] },
             { id: 23, nivel: 3, nombre: "Diseño de Sistemas de Información", modPlan: "A", corrR: [14, 16], corrA: [4, 6, 8] },
             { id: 99, nivel: 3, nombre: "Seminario Integrador (Analista)", modPlan: "2C", corrR: [16], corrA: [6, 8, 13, 14] },
             { id: 701, nivel: 3, nombre: "ELEC: Backend de Aplicaciones", modPlan: "2C", corrR: [14, 13], corrA: [6] },
-            { id: 706, nivel: 3, nombre: "ELEC: Desarrollo de Aplicaciones Con Objetos", modPlan: "2C", corrR: [13], corrA: [6] },
-            // NIVEL 4
             { id: 24, nivel: 4, nombre: "Legislación", modPlan: "2C-1C", corrR: [11], corrA: [] },
             { id: 25, nivel: 4, nombre: "Ingeniería y Calidad de Software", modPlan: "2C-1C", corrR: [19, 20, 23], corrA: [13, 14] },
             { id: 26, nivel: 4, nombre: "Redes de Datos", modPlan: "A", corrR: [15, 21], corrA: [] },
@@ -166,38 +164,36 @@
             { id: 29, nivel: 4, nombre: "Tecnologías Para Automatización", modPlan: "2C-1C", corrR: [10, 22], corrA: [9] },
             { id: 30, nivel: 4, nombre: "Adm. de Sistemas de Información", modPlan: "A", corrR: [18, 23], corrA: [16] },
             { id: 702, nivel: 4, nombre: "ELEC: Green Software", modPlan: "1C-2C", corrR: [20, 19], corrA: [14, 13] },
-            { id: 703, nivel: 4, nombre: "ELEC: Gestión Industrial Producción", modPlan: "1C", corrR: [19], corrA: [8, 16] },
-            { id: 704, nivel: 4, nombre: "ELEC: Gestión Mejora Procesos", modPlan: "1C", corrR: [19], corrA: [8, 16] },
-            { id: 705, nivel: 4, nombre: "ELEC: DevOPS", modPlan: "1C", corrR: [19, 20], corrA: [14, 13] },
-            { id: 707, nivel: 4, nombre: "ELEC: Comunicación Multimedial", modPlan: "2C", corrR: [19], corrA: [8, 16] },
+            { id: 703, nivel: 4, nombre: "ELEC: Gestión Industrial de la Producción", modPlan: "1C", corrR: [19], corrA: [8, 16] },
+            { id: 704, nivel: 4, nombre: "ELEC: Gestión de la Mejora de los Procesos", modPlan: "1C", corrR: [19], corrA: [8, 16] },
+            { id: 705, nivel: 4, nombre: "ELEC:Desarrollo y Operaciones devOPS", modPlan: "1C", corrR: [19, 20], corrA: [14, 13] },
+            { id: 706, nivel: 4, nombre: "ELEC: Desarrollo de Aplicaciones Con Objetos", modPlan: "2C", corrR: [13], corrA: [6] },
+            { id: 707, nivel: 4, nombre: "ELEC: Comunicación Multimedial en el Desarrollo de lo Sistemas de Informacion", modPlan: "2C", corrR: [19], corrA: [8, 16] },
             { id: 708, nivel: 4, nombre: "ELEC: Arquitectura de Software", modPlan: "1C", corrR: [19, 20], corrA: [14, 13] },
-            { id: 718, nivel: 5, nombre: "ELEC: Integración App Web", modPlan: "2C", corrR: [26, 19], corrA: [19, 20] },
-            // NIVEL 5
+            
             { id: 31, nivel: 5, nombre: "Inteligencia Artificial", modPlan: "2C-1C", corrR: [28], corrA: [17, 22] },
             { id: 32, nivel: 5, nombre: "Ciencia de Datos", modPlan: "2C-1C", corrR: [28], corrA: [17, 19] },
             { id: 33, nivel: 5, nombre: "Sistemas de Gestión", modPlan: "1C-2C", corrR: [18, 27], corrA: [23] },
             { id: 34, nivel: 5, nombre: "Gestión Gerencial", modPlan: "1C-2C", corrR: [24, 30], corrA: [18] },
-            { id: 35, nivel: 5, nombre: "Seguridad en los Sistemas", modPlan: "1C-2C", corrR: [26, 30], corrA: [20, 21] },
+            { id: 35, nivel: 5, nombre: "Seguridad en los Sistemas de Informacion", modPlan: "1C-2C", corrR: [26, 30], corrA: [20, 21] },
             { id: 36, nivel: 5, nombre: "Proyecto Final", modPlan: "A", corrR: [25, 26, 30], corrA: [12, 20, 23] },
-            { id: 709, nivel: 5, nombre: "ELEC: Blockchain", modPlan: "1C", corrR: [26, 19], corrA: [14, 20] },
-            { id: 710, nivel: 5, nombre: "ELEC: Creatividad e Innovación", modPlan: "1C-2C", corrR: [30], corrA: [20] },
+            { id: 709, nivel: 5, nombre: "ELEC: Desarrollo de Tecnología Blockchain", modPlan: "1C", corrR: [26, 19], corrA: [14, 20] },
+            { id: 710, nivel: 5, nombre: "ELEC: Creatividad e Innovación en Ingenieria", modPlan: "1C-2C", corrR: [30], corrA: [20] },
             { id: 711, nivel: 5, nombre: "ELEC: Auditorías de Si/Ti", modPlan: "1C", corrR: [30], corrA: [20] },
             { id: 712, nivel: 5, nombre: "ELEC: Gerenciamiento Estratégico", modPlan: "1C", corrR: [30], corrA: [20] },
-            { id: 713, nivel: 5, nombre: "ELEC: Consultoría Negocios", modPlan: "1C", corrR: [30], corrA: [20] },
+            { id: 713, nivel: 5, nombre: "ELEC: Consultoría en Negocios Digitales", modPlan: "1C", corrR: [30], corrA: [20] },
             { id: 714, nivel: 5, nombre: "ELEC: Emprendimientos Tecnológicos", modPlan: "1C", corrR: [30], corrA: [16, 19] },
-            { id: 715, nivel: 5, nombre: "ELEC: Decisiones Escenarios", modPlan: "1C", corrR: [27], corrA: [19] },
+            { id: 715, nivel: 5, nombre: "ELEC: Decisiones en Escenarios Complejos", modPlan: "1C", corrR: [27], corrA: [19] },
             { id: 716, nivel: 5, nombre: "ELEC: Testing de Software", modPlan: "2C", corrR: [25], corrA: [19, 20] },
-            { id: 717, nivel: 5, nombre: "ELEC: Seguridad en Desarrollo", modPlan: "2C", corrR: [26, 19], corrA: [20, 8] },
-            { id: 719, nivel: 5, nombre: "ELEC: Software Fuentes Abiertas", modPlan: "2C", corrR: [19, 20, 26], corrA: [13, 14] }
+            { id: 717, nivel: 5, nombre: "ELEC: Seguridad en Desarrollo de Software", modPlan: "2C", corrR: [26, 19], corrA: [20, 8] },
+	    { id: 718, nivel: 5, nombre: "ELEC: Integración de Aplicaciones en Entorno Web", modPlan: "2C", corrR: [26, 19], corrA: [19, 20] },            
+	    { id: 719, nivel: 5, nombre: "ELEC: Ingenieria de Software de Fuentes Abiertas/Libres", modPlan: "2C", corrR: [19, 20, 26], corrA: [13, 14] }
         ];
 
         let materias = materiasBase.map(m => ({ ...m, condicion: "sin_cursar", año: "", modReal: "", advertir: false }));
 
-        // FUNCIÓN CLAVE: Normaliza el texto para búsquedas (quita acentos y pasa a minúsculas)
         function normalizarTexto(texto) {
-            return texto.toLowerCase()
-                        .normalize("NFD")
-                        .replace(/[\u0300-\u036f]/g, "");
+            return texto.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
         }
 
         function setAnioIngreso(valor, skipRender = false) {
@@ -338,7 +334,7 @@
 
                                     return `
                                     <tr id="row-${m.id}" class="${rowClass} transition-all" onclick="highlightRow(${m.id})" onfocusout="handleRowBlur(${m.id})">
-                                        <td class="p-2 font-medium">${m.nombre}</td>
+                                        <td class="p-2 font-medium">${m.nombre} <span class="text-[10px] text-slate-500 italic">(${m.modPlan})</span></td>
                                         <td class="p-2">
                                             <select onchange="updateMateria(${m.id}, 'condicion', this.value)" class="bg-slate-900 border border-slate-600 rounded p-1 text-xs w-full text-white">
                                                 <option value="sin_cursar" ${m.condicion == 'sin_cursar' ? 'selected' : ''}>Seleccionar...</option>
@@ -362,6 +358,7 @@
                                                 <option value="2C" ${m.modReal == '2C' ? 'selected' : ''}>2° Cuat</option>
                                                 <option value="A" ${m.modReal == 'A' ? 'selected' : ''}>Anual</option>
                                                 <option value="I" ${m.modReal == 'I' ? 'selected' : ''}>Intensivo</option>
+                                                <option value="E" ${m.modReal == 'E' ? 'selected' : ''}>Equivalencia</option>
                                             </select>
                                         </td>
                                         <td class="p-2 text-center">
@@ -383,39 +380,76 @@
             let errores = [];
             m.corrR.forEach(reqId => {
                 const req = materias.find(x => x.id == reqId);
-                if (req.condicion !== 'regular' && req.condicion !== 'aprobada') errores.push(`Req. ${req.nombre} REGULAR`);
+                const estaValida = (req.condicion === 'regular' || req.condicion === 'aprobada');
+                if (!estaValida) {
+                    errores.push(`Req. ${req.nombre} REGULAR`);
+                } else {
+                    if (req.modReal === 'E') {
+                        const erroresDeLaPrevia = checkCorrelativa(req);
+                        if (erroresDeLaPrevia.length > 0) {
+                            errores.push(`Bloqueado: ${req.nombre} (Equiv. sin previas completas)`);
+                        }
+                    }
+                }
             });
             m.corrA.forEach(reqId => {
                 const req = materias.find(x => x.id == reqId);
-                if (req.condicion !== 'aprobada') errores.push(`Req. ${req.nombre} APROBADA`);
+                const estaAprobada = (req.condicion === 'aprobada');
+                if (!estaAprobada) {
+                    errores.push(`Req. ${req.nombre} APROBADA`);
+                } else {
+                    if (req.modReal === 'E') {
+                        const erroresDeLaPrevia = checkCorrelativa(req);
+                        if (erroresDeLaPrevia.length > 0) {
+                            errores.push(`Bloqueado: ${req.nombre} (Equiv. sin previas completas)`);
+                        }
+                    }
+                }
             });
             return errores;
         }
 
         function renderAnalisis() {
-            // NORMALIZACIÓN DE BÚSQUEDA: Se limpia la entrada del usuario
             const busquedaRaw = document.getElementById('busqueda').value;
             const busquedaNorm = normalizarTexto(busquedaRaw);
             
+            // Cálculos Globales (Aquí SÍ cuentan las electivas)
+            const totalAprobadas = materias.filter(m => m.condicion === 'aprobada').length;
+            const totalRegulares = materias.filter(m => m.condicion === 'regular').length;
+            
+            const resumenStats = document.getElementById('resumen-estadisticas');
+            resumenStats.innerHTML = `
+                <div class="bg-blue-900/40 border border-blue-500/50 p-4 rounded-xl text-center">
+                    <p class="text-xs text-blue-300 uppercase font-bold tracking-widest">Aprobadas Totales</p>
+                    <p class="text-3xl font-black text-white">${totalAprobadas}</p>
+                </div>
+                <div class="bg-slate-800 border border-slate-600 p-4 rounded-xl text-center">
+                    <p class="text-xs text-slate-400 uppercase font-bold tracking-widest">Regulares Totales</p>
+                    <p class="text-3xl font-black text-white">${totalRegulares}</p>
+                </div>
+            `;
+
             const container = document.getElementById('grid-analisis');
             let htmlFinal = "";
 
             for(let n=1; n<=5; n++) {
-                // COMPARACIÓN NORMALIZADA: Se normaliza el nombre de la materia para comparar
-                const materiasNivel = materias.filter(m => {
-                    const nombreNorm = normalizarTexto(m.nombre);
-                    return m.nivel == n && nombreNorm.includes(busquedaNorm);
-                });
+                // Denominador por nivel (Solo materias obligatorias: id < 700)
+                const materiasObligatoriasNivel = materias.filter(m => m.nivel == n && m.id < 700);
+                // Numerador por nivel (Solo aprobadas obligatorias)
+                const aprobadasNivel = materiasObligatoriasNivel.filter(m => m.condicion === 'aprobada').length;
+                
+                // Filtro para el listado visual (incluye electivas si el usuario busca)
+                const materiasParaMostrar = materias.filter(m => m.nivel == n && normalizarTexto(m.nombre).includes(busquedaNorm));
 
-                if (materiasNivel.length > 0) {
+                if (materiasParaMostrar.length > 0) {
                     htmlFinal += `
                     <div class="mb-10">
                         <h2 class="text-2xl font-black text-blue-500 mb-4 flex items-center gap-4 uppercase">
-                            ${n}° AÑO
+                            ${n}° AÑO <span class="text-slate-500 text-sm font-bold bg-slate-800 px-3 py-1 rounded-full border border-slate-700">${aprobadasNivel} / ${materiasObligatoriasNivel.length}</span>
                             <div class="h-px bg-slate-700 flex-1"></div>
                         </h2>
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                            ${materiasNivel.map(m => cardTemplate(m)).join('')}
+                            ${materiasParaMostrar.map(m => cardTemplate(m)).join('')}
                         </div>
                     </div>`;
                 }
@@ -427,36 +461,53 @@
             const errores = checkCorrelativa(m);
             const apta = errores.length === 0;
             const esAprobada = m.condicion === 'aprobada';
+            const esRegular = m.condicion === 'regular';
             const esElectiva = m.id >= 700;
+            const esEquivalencia = m.modReal === 'E';
+
+            let statusLabel = "";
+            let statusClass = "";
+
+            if (esAprobada) {
+                statusLabel = "APROBADA";
+                statusClass = "bg-blue-600";
+            } else if (esRegular) {
+                statusLabel = "REGULAR";
+                statusClass = "bg-slate-600";
+            } else if (apta) {
+                statusLabel = "APTA";
+                statusClass = "bg-green-600";
+            } else {
+                statusLabel = "BLOQUEADA";
+                statusClass = "bg-red-600";
+            }
 
             return `
-                <div class="p-5 rounded-xl border-2 transition-all ${esAprobada ? 'bg-blue-900/30 border-blue-500/50 opacity-70' : (apta ? 'bg-green-900/20 border-green-500' : 'bg-red-900/20 border-red-500')}">
+                <div class="p-5 rounded-xl border-2 transition-all ${esAprobada ? 'bg-blue-900/30 border-blue-500/50 opacity-70' : (esRegular ? 'bg-slate-800/50 border-slate-500' : (apta ? 'bg-green-900/20 border-green-500' : 'bg-red-900/20 border-red-500'))}">
                     <div class="flex justify-between items-start mb-2">
                         <span class="text-[10px] uppercase font-bold ${esElectiva ? 'text-amber-400' : 'text-blue-300'}">${esElectiva ? 'Materia Electiva' : m.nivel + '° Año'}</span>
-                        <span class="px-2 py-1 rounded text-[10px] font-bold text-white ${apta ? 'bg-green-600' : 'bg-red-600'}">
-                            ${apta ? 'APTA' : 'BLOQUEADA'}
+                        <span class="px-2 py-1 rounded text-[10px] font-bold text-white ${statusClass}">
+                            ${statusLabel}
                         </span>
                     </div>
                     <h3 class="font-bold text-lg text-white leading-tight">${m.nombre}</h3>
+                    ${esEquivalencia ? '<p class="text-[10px] text-blue-400 font-bold mt-1 tracking-widest uppercase">[ CARGADA POR EQUIVALENCIA ]</p>' : ''}
                     <div class="mt-4">
-                        ${!apta ? `<ul class="text-xs text-red-200 list-disc pl-4 space-y-1">${errores.map(e => `<li>${e}</li>`).join('')}</ul>` : 
-                        (esAprobada ? '<p class="text-xs text-blue-300 font-bold italic">✓ Aprobada</p>' : '<p class="text-xs text-green-300 font-bold italic">✓ Correlativas cumplidas</p>')}
+                        ${!apta && !esAprobada && !esRegular ? `<ul class="text-xs text-red-200 list-disc pl-4 space-y-1">${errores.map(e => `<li>${e}</li>`).join('')}</ul>` : 
+                        (esAprobada ? '<p class="text-xs text-blue-300 font-bold italic">✓ Aprobada</p>' : 
+                        (esRegular ? '<p class="text-xs text-slate-300 font-bold italic">✓ Regularizada</p>' : '<p class="text-xs text-green-300 font-bold italic">✓ Correlativas cumplidas</p>'))}
                     </div>
                 </div>
             `;
         }
 
-        // --- FUNCIONES DE IMPORTACIÓN / EXPORTACIÓN ---
-
         function exportarCSV() {
             let csvContent = "data:text/csv;charset=utf-8,";
             csvContent += "ID,Nombre,Condicion,Anio,Modalidad Real,Anio Ingreso Alumno\n";
-
             materias.forEach(m => {
                 let row = `${m.id},"${m.nombre}",${m.condicion},${m.año},${m.modReal},${anioIngresoAlumno}`;
                 csvContent += row + "\n";
             });
-
             const encodedUri = encodeURI(csvContent);
             const link = document.createElement("a");
             link.setAttribute("href", encodedUri);
@@ -469,26 +520,21 @@
         function importarCSV(input) {
             const file = input.files[0];
             if (!file) return;
-
             const reader = new FileReader();
             reader.onload = function(e) {
                 const text = e.target.result;
                 const rows = text.split("\n");
-                
                 for (let i = 1; i < rows.length; i++) {
                     if (rows[i].trim() === "") continue;
-                    
                     const columns = rows[i].split(",");
                     const id = parseInt(columns[0]);
                     const condicion = columns[2];
                     const anioMateria = columns[3];
                     const modReal = columns[4];
                     const anioIngresoCSV = columns[5];
-
                     if (i === 1 && anioIngresoCSV) {
                         setAnioIngreso(anioIngresoCSV, true);
                     }
-
                     const m = materias.find(x => x.id === id);
                     if (m) {
                         m.condicion = condicion || "sin_cursar";
@@ -497,7 +543,6 @@
                         m.advertir = false;
                     }
                 }
-                
                 alert("Plan cargado correctamente.");
                 input.value = ""; 
                 renderCarga();
